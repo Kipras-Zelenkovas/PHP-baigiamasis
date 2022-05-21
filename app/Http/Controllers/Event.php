@@ -49,11 +49,12 @@ class Event extends Controller
 
     public function updateEvent(Request $request, $id)
     {
-        if (!Gate::allows('modify', $eventModel)) {
-            return abort(403);
-        }
 
         $event = EventModel::find($id);
+
+        if (!Gate::allows('modify', $event)) {
+            return abort(403);
+        }
 
         $validated = $request->validate([
             'title' => 'required|unique:posts',
