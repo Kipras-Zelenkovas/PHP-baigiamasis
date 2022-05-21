@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Event extends Model
 {
     use HasFactory;
-    protected $table = 'posts';
-    protected $fillable = ['title', 'description', 'user_id', 'image', 'start_date', 'post_id'];
+    protected $table = 'event';
+    protected $fillable = ['title', 'description', 'user_id', 'image', 'start_date'];
 
     public function user()
     {

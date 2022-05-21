@@ -8,7 +8,7 @@
     <div class="container">
         <form action="/register/event" method="POST">
             @csrf
-            <input type="hidden" id="post_id" name="post_id" value="{{$event->id}}">
+            <input type="hidden" id="event_id" name="event_id" value="{{$event->id}}">
             <div class="form-group">
                 <label for="name">Name</label>
                 <input name="name" id="name" class="form-control">
@@ -27,7 +27,17 @@
         </form>
     </div>
 
-    <div>
-        {{$event->eventUser}}
-    </div>
+    @if ($show)
+        <div>
+            @foreach ($event->eventUser as $user)
+                <div class="border border-dark" style="width: 25vh">
+                    <div class="p-2">
+                        {{$user->name}} 
+                        <a href="/accept/event/{{$user->id}}/accept" class="btn btn-primary">Accept</a>
+                        <a href="/accept/event/{{$user->id}}/decline" class="btn btn-primary">Decline</a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
 @endsection

@@ -33,4 +33,4 @@ Route::get('/events/users', [Event::class, 'showUsersEvents']);
 Route::get('/event/{id}', [Event::class, 'showEvent']);
 
 Route::post('/register/event', [EventUsers::class, 'registerEvent']);
-Route::post('/accept/event/{id}/{condition}', [EventUsers::class, 'accept']);
+Route::get('/accept/event/{id}/{condition}', [EventUsers::class, 'accept']);

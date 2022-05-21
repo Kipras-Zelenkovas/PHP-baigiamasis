@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event as EventModel;
-use Illuminate\Auth\Access\Gate;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +20,7 @@ class Event extends Controller
     {
 
         $validated = $request->validate([
-            'title' => 'required|unique:posts',
+            'title' => 'required|unique:event',
             'description' => 'required',
             'start_date' => 'required|date',
         ]);
@@ -34,9 +34,9 @@ class Event extends Controller
         return redirect('/');
     }
 
-    public function deleteEvent($id, EventModel $event)
+    public function deleteEvent($id, EventModel $eventModel)
     {
-        if (!Gate::allows('modify-event', $event)) {
+        if (!Gate::allows('modify', $eventModel)) {
             return abort(403);
         }
 
@@ -47,9 +47,9 @@ class Event extends Controller
         return redirect()->back();
     }
 
-    public function updateEvent(Request $request, $id, EventModel $event)
+    public function updateEvent(Request $request, $id, EventModel $eventModel)
     {
-        if (!Gate::allows('modify-event', $event)) {
+        if (!Gate::allows('modify', $eventModel)) {
             return abort(403);
         }
 
@@ -91,10 +91,11 @@ class Event extends Controller
         return view('events.events', compact('events'));
     }
 
-    public function showEvent(Request $request, $id)
+    public function showEvent($id, EventModel $eventModel)
     {
         $event = EventModel::find($id);
+        $show = Gate::allows('modify', $eventModel) ? true : false;
 
-        return view('events.event', ['event' => $event]);
+        return view('events.event', ['event' => $event, 'show' => true]);
     }
 }

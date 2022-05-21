@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\Accept;
+use App\Models\Event;
 use App\Models\EventUsers as ModelsEventUsers;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class EventUsers extends Controller
 {
@@ -17,13 +21,13 @@ class EventUsers extends Controller
     {
 
         $validated = $request->validate([
-            'post_id' => 'required|numeric',
+            'event_id' => 'required|numeric',
             'name' => 'required',
             'email' => 'required|email',
             'telephone' => 'string',
         ]);
 
-        $check = ModelsEventUsers::where('post_id', $validated['post_id'])
+        $check = ModelsEventUsers::where('event_id', $validated['event_id'])
             ->where('email', $validated['email'])->first();
 
         if ($check === null) {
@@ -34,19 +38,20 @@ class EventUsers extends Controller
         return redirect()->back();
     }
 
-    public function accept($id, $condition)
+    public function accept($id, $condition, Event $event)
     {
+
+        /* if (!Gate::allows('modify-event', $event)) {
+            return abort(403);
+        } */
+
         $user = ModelsEventUsers::find($id);
 
 
-        if ($condition) {
-            #nusiusti laiska jog priimtas
-        }
-
-        #nusiusti laiska jog nepriimtas
+        Mail::to($user->email)->send(new Accept($condition));
 
         $user->delete();
 
-        return $user;
+        return redirect()->back();
     }
 }
