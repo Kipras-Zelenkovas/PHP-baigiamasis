@@ -34,20 +34,20 @@ class Event extends Controller
         return redirect('/');
     }
 
-    public function deleteEvent($id, EventModel $eventModel)
+    public function deleteEvent($id)
     {
-        if (!Gate::allows('modify', $eventModel)) {
-            return abort(403);
-        }
-
         $event = EventModel::find($id);
+
+        if (!Gate::allows('modify', $event)) {
+            abort(403);
+        }
 
         $event->delete();
 
         return redirect()->back();
     }
 
-    public function updateEvent(Request $request, $id, EventModel $eventModel)
+    public function updateEvent(Request $request, $id)
     {
         if (!Gate::allows('modify', $eventModel)) {
             return abort(403);
@@ -91,11 +91,11 @@ class Event extends Controller
         return view('events.events', compact('events'));
     }
 
-    public function showEvent($id, EventModel $eventModel)
+    public function showEvent($id)
     {
         $event = EventModel::find($id);
-        $show = Gate::allows('modify', $eventModel) ? true : false;
+        $show = Gate::allows('modify', $event) ? true : false;
 
-        return view('events.event', ['event' => $event, 'show' => true]);
+        return view('events.event', ['event' => $event, 'show' => $show]);
     }
 }

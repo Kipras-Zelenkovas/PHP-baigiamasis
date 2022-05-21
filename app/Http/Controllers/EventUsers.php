@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\Accept;
-use App\Models\Event;
 use App\Models\EventUsers as ModelsEventUsers;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -38,15 +36,10 @@ class EventUsers extends Controller
         return redirect()->back();
     }
 
-    public function accept($id, $condition, Event $event)
+    public function accept($id, $condition)
     {
 
-        /* if (!Gate::allows('modify-event', $event)) {
-            return abort(403);
-        } */
-
         $user = ModelsEventUsers::find($id);
-
 
         Mail::to($user->email)->send(new Accept($condition));
 

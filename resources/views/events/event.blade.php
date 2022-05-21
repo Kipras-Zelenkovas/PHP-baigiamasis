@@ -39,5 +39,12 @@
                 </div>
             @endforeach
         </div>
+        <form action="/delete/event/{{$event->id}}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-danger">add</button>
+        </form>
     @endif
+
+
+    
 @endsection
