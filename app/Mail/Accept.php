@@ -18,10 +18,12 @@ class Accept extends Mailable
      */
 
     public $accept;
+    public $user;
 
-    public function __construct($accept)
+    public function __construct($accept, $user)
     {
         $this->accept = $accept;
+        $this->user = $user;
     }
 
     /**
@@ -31,6 +33,6 @@ class Accept extends Mailable
      */
     public function build()
     {
-        return $this->view('mail')->with('accept', $this->accept);
+        return $this->view('mail', ['accept' => $this->accept, 'user' => $this->user]);
     }
 }

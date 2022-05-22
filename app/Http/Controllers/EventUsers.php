@@ -41,7 +41,7 @@ class EventUsers extends Controller
 
         $user = ModelsEventUsers::find($id);
 
-        Mail::to($user->email)->send(new Accept($condition));
+        Mail::to($user->email)->send(new Accept($condition, $user));
 
         $user->delete();
 

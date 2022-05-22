@@ -21,7 +21,8 @@
 </head>
 <body>
     <div id="app">
-        {{$accept}}
+        <p>Gerbiamasis: {{$user->name}}</p>
+        <p>Jūs buvote: {{$accept}}</p>
     </div>
 </body>
 </html>

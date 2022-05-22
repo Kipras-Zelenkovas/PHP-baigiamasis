@@ -6,7 +6,7 @@ use App\Models\Event as EventModel;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class Event extends Controller
 {
@@ -20,14 +20,18 @@ class Event extends Controller
     {
 
         $validated = $request->validate([
-            'title' => 'required|unique:event',
-            'description' => 'required',
-            'start_date' => 'required|date',
+            'title' => 'string',
+            'description' => 'string',
+            'start_date' => 'date',
         ]);
 
-        $path = $request->file('image')->store('public/images');
-        $fileName = str_replace('public', '', $path);
-        $validated = array_merge($validated, ['image' => $fileName, 'user_id' => Auth::id()]);
+        if ($request->image) {
+            $path = $request->file('image')->store('public/images');
+            $fileName = str_replace('public', '', $path);
+            $validated = array_merge($validated, ['image' => $fileName]);
+        }
+
+        $validated = array_merge($validated, ['user_id' => Auth::id()]);
 
         EventModel::create($validated);
 
@@ -42,9 +46,15 @@ class Event extends Controller
             abort(403);
         }
 
+        File::delete(storage_path('app/public' . $event->image));
+
+        $event->eventUser()->each(function ($user) {
+            $user->delete();
+        });
+
         $event->delete();
 
-        return redirect()->back();
+        return redirect('/');
     }
 
     public function updateEvent(Request $request, $id)
@@ -57,32 +67,39 @@ class Event extends Controller
         }
 
         $validated = $request->validate([
-            'title' => 'required|unique:posts',
-            'description' => 'required',
-            'start_date' => 'required|date',
+            'title' => 'string',
+            'description' => 'string',
+            'start_date' => 'date',
         ]);
 
         if ($request->image) {
+            File::delete(storage_path('app/public' . $event->image));
+
             $path = $request->file('image')->store('public/images');
             $fileName = str_replace('public', '', $path);
             $validated = array_merge($validated, ['image' => $fileName]);
-
-            Storage::delete($event->image);
+            $event->image = $validated['image'];
         }
 
         $event->title = $validated['title'];
         $event->description = $validated['description'];
         $event->start_date = $validated['start_date'];
-        $event->image = $validated['image'];
 
         $event->save();
 
-        return redirect()->back();
+        return redirect('/');
     }
 
     public function showAddEvents()
     {
         return view('events.addEvent');
+    }
+
+    public function showUpdateEvent($id)
+    {
+        $event = EventModel::find($id);
+
+        return view('events.updateEvent', ['event' => $event]);
     }
 
     public function showEvents()

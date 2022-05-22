@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EventUsers;
 use App\Http\Controllers\Event;
+use App\Http\Controllers\Info;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,21 +16,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/about_us', [Info::class, 'showAbout_us']);
+Route::get('/contacts', [Info::class, 'showContacts']);
 
 Route::get('/add/event', [Event::class, 'showAddEvents']);
 Route::post('/add/event', [Event::class, 'addEvent']);
 Route::post('/delete/event/{id}', [Event::class, 'deleteEvent']);
+Route::get('/update/event/{id}', [Event::class, 'showUpdateEvent']);
 Route::post('/update/event/{id}', [Event::class, 'updateEvent']);
 
-Route::get('/events', [Event::class, 'showEvents']);
-Route::get('/events/users', [Event::class, 'showUsersEvents']);
+Route::get('/', [Event::class, 'showEvents'])->name('home');
 Route::get('/event/{id}', [Event::class, 'showEvent']);
 
 Route::post('/register/event', [EventUsers::class, 'registerEvent']);
